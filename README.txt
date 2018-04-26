@@ -1,0 +1,1 @@
+Foi decidido utilizar o banco de dados MySQL.

@@ -1,0 +1,7 @@
+br\com\controlepartidascs\Configuracao.class
+br\com\controlepartidascs\model\Jogador.class
+br\com\controlepartidascs\model\DetalhePartida.class
+br\com\controlepartidascs\model\Partida.class
+br\com\controlepartidascs\repository\PartidaRepository.class
+br\com\controlepartidascs\service\PartidaService.class
+br\com\controlepartidascs\controller\PartidaController.class
