@@ -1,9 +1,14 @@
 package br.com.controlepartidascs.controller;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.controlepartidascs.model.PartidaDetalhe;
@@ -16,15 +21,38 @@ public class PartidaDetalheController {
 	@Autowired
 	PartidaDetalheService partidaDetalheService;
 
+	/**
+	 * @param partidaDetalhe
+	 * @return
+	 */
 	@RequestMapping(value = "/gravar", method = RequestMethod.POST, consumes = "application/json")
-	public String gravarPartida(@RequestBody PartidaDetalhe partidaDetalhe) {
+	public Response gravarPartida(@RequestBody List<PartidaDetalhe> partidaDetalhe) {
+		try {
+			for (PartidaDetalhe pd : partidaDetalhe) {
+				partidaDetalheService.salvarFromServidorJogo(pd);
+			}
+		} catch (Exception e) { // Melhorar tratamento para não salvar só metade.
+			LogController.logWarning("Tentativa falha em gravação de partida detalhe");
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
 
-		partidaDetalhe.getKiller();
+		LogController.log("Partida Detalhes foram Salvas.");
 
-		partidaDetalheService.salvarFromServidorJogo(partidaDetalhe);
+		return Response.ok("Partida Detalhes foram Salvas").build();
+	}
 
-		LogController.log("Partida Detalhada Salva");
+	@RequestMapping(value = "/listar", method = RequestMethod.GET, produces = "application/json")
+	public Response listarPartidaDetalhada(@RequestParam(required = false, name = "matchId") String id) {
+		String partidaComDetalhes;
 
-		return partidaDetalhe.toString();
+		try {
+			partidaComDetalhes = partidaDetalheService.getRankingPartidaDetalheByNumeroControle(Integer.parseInt(id));
+		} catch (NullPointerException e) {
+			return Response.ok("Nenhum ranking encontrado com o número de partida " + id).build();
+		}
+
+		LogController.log("Lista da partida detalhada " + id.toString() + " foi visualizada.");
+
+		return Response.ok(partidaComDetalhes).build();
 	}
 }

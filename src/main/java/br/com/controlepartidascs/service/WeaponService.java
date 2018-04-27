@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
+import br.com.controlepartidascs.controller.LogController;
 import br.com.controlepartidascs.model.Partida;
 import br.com.controlepartidascs.model.PartidaDetalhe;
 import br.com.controlepartidascs.model.RankingWeapon;
@@ -34,31 +36,43 @@ public class WeaponService {
 
 	public boolean verificarExistenciaPorNome(String nome) {
 		Weapon weapon = weaponRepository.findByNome(nome);
-		if(weapon == null) {
+		if (weapon == null) {
 			return false;
 		}
 		return true;
 	}
-	
+
+	public void salvar(Weapon weapon) {
+		weaponRepository.save(weapon);
+	}
+
 	public Weapon getWeaponByName(String nome) {
 		return weaponRepository.findByNome(nome);
 	}
 
-	public String getWeaponRankingByDate(String date1, String date2) {
+	public String getWeaponRankingByDate(String dateIni, String dateFim) throws NullPointerException {
 		ZonedDateTime zdtInicio;
 		ZonedDateTime zdtFim;
+		LocalDate localDateIni = LocalDate.now();
+		LocalDate localDateFim = LocalDate.now();
 
-		if (date1 == null) {
+		if (dateIni == null) {
 			zdtInicio = null;
 			zdtFim = null;
 		} else {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			// convert String to LocalDate
-			LocalDate localDate1 = LocalDate.parse(date1, formatter);
-			LocalDate localDate2 = LocalDate.parse(date2, formatter);
+			try {
+				// convert String to LocalDate
+				localDateIni = LocalDate.parse(dateIni, formatter);
+				localDateFim = LocalDate.parse(dateFim, formatter);
+			} catch (DateTimeParseException e) {
+				LogController.logWarning("Data inserida inválida ao tentar visualizar ranking de armas");
+				throw new NullPointerException(
+						"Data inserida inválida por usuário ao tentar visualizar o ranking de armas");
+			}
 
-			zdtInicio = localDate1.atStartOfDay(ZoneOffset.UTC);
-			zdtFim = localDate2.atTime(23, 59, 59).atZone(ZoneOffset.UTC);
+			zdtInicio = localDateIni.atStartOfDay(ZoneOffset.UTC);
+			zdtFim = localDateFim.atTime(23, 59, 59).atZone(ZoneOffset.UTC);
 		}
 
 		List<Partida> partidas = new ArrayList<Partida>();

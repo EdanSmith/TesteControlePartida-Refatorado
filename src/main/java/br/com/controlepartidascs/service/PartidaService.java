@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,38 +42,43 @@ public class PartidaService {
 	PartidaDetalheService partidaDetalheService;
 
 	/**
-	 * Popula o banco de dados com o Json de partidas. "matches.json"
+	 * Popula o banco de dados com o Json de partidas. "matches.json" Caso o banco
+	 * não esteja populado ainda, o método irá adicionar jogadores inexistentes.
+	 * Comportamento proposital para facilitar no teste.
 	 */
 	public void popularBanco() {
 		PopulaBancoComJson pbcj = new PopulaBancoComJson();
 		List<Partida> partida = pbcj.getPartidasFromJsonFile();
 		for (Partida match : partida) {
 			Set<Jogador> jogadores = match.getJogador();
-			jogadorService.salvarJogadoresInexistentes(jogadores); // Caso o banco não esteja populado ainda, o método
-																	// irá
-																	// adicionar jogadores inexistentes
+			jogadorService.salvarJogadoresInexistentes(jogadores);
 
-			salvarPartidaComSomenteNomeDeJogadores(match);
+			try {
+				salvarPartidaComSomenteNomeDeJogadores(match);
+			} catch (Exception e) {
+				LogController.logError("Erro na tentativa de salvar jogadores");
+				e.printStackTrace();
+			}
 		}
 	}
-	
-	public Iterable<Partida> findAll(){
+
+	public Iterable<Partida> findAll() {
 		return partidaRepository.findAll();
 	}
-	
-	public List<Partida> findByInicioBetween(ZonedDateTime zdtInicio, ZonedDateTime zdtFim){
+
+	public List<Partida> findByInicioBetween(ZonedDateTime zdtInicio, ZonedDateTime zdtFim) {
 		return partidaRepository.findByInicioBetween(zdtInicio, zdtFim);
 	}
 
 	public Partida findByNumeroControle(int numeroControle) {
 		return partidaRepository.findByNumeroControle(numeroControle);
 	}
-	
+
 	public void salvar(Partida partida) {
 		partidaRepository.save(partida);
 	}
 
-	public void salvarPartidaComSomenteNomeDeJogadores(Partida partida) {
+	public void salvarPartidaComSomenteNomeDeJogadores(Partida partida) throws Exception {
 		Set<Jogador> jogador = partida.getJogador();
 		Set<Jogador> jogadorNovo = new HashSet<Jogador>();
 		Jogador jogadorTemp;
@@ -89,7 +95,7 @@ public class PartidaService {
 	}
 
 	// Utilizado Java8
-	public String getRankingByDate(String date) {
+	public String getRankingByDate(String date) throws NullPointerException{
 		ZonedDateTime zdtInicio;
 		ZonedDateTime zdtFim;
 
@@ -98,8 +104,14 @@ public class PartidaService {
 			zdtFim = null;
 		} else {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			LocalDate localDate = LocalDate.of(1, 1, 1);
 			// convert String to LocalDate
-			LocalDate localDate = LocalDate.parse(date, formatter);
+			try {
+				localDate = LocalDate.parse(date, formatter);
+			}catch(DateTimeParseException e) {
+				LogController.logWarning("Data inserida inválida ao tentar visualizar ranking de jogadores");
+				throw new NullPointerException("Data inválida inserida por usuário ao tentar visualizar ranking de jogadores");
+			}
 
 			zdtInicio = localDate.atStartOfDay(ZoneOffset.UTC);
 			zdtFim = localDate.atTime(23, 59, 59).atZone(ZoneOffset.UTC);
@@ -242,5 +254,9 @@ public class PartidaService {
 
 		String json = new Gson().toJson(rankingPorPartida);
 		return json;
+	}
+
+	public List<Jogador> findJogadoresDaPartida(int numeroControle) {
+		return partidaRepository.findJogadoresDaPartida(numeroControle);
 	}
 }
