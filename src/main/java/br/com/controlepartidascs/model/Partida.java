@@ -42,27 +42,26 @@ public class Partida {
 
 	@JsonProperty("players")
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="partida_jogador",
-	joinColumns = {@JoinColumn(name = "id_partida")},
-	inverseJoinColumns = {@JoinColumn(name = "id_jogador")})
+	@JoinTable(name = "partida_jogador", joinColumns = { @JoinColumn(name = "id_partida") }, inverseJoinColumns = {
+			@JoinColumn(name = "id_jogador") })
 	private Set<Jogador> jogador = new HashSet<Jogador>();
-	
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "partida")
-    private List<PartidaDetalhe> partidaDetalhe;
 
-	public Partida() {}
-	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "partida")
+	private List<PartidaDetalhe> partidaDetalhe;
+
+	public Partida() {
+	}
+
 	public Partida(Integer numeroControle) {
 		this.numeroControle = numeroControle;
 	}
-	
+
 	public Partida(Integer numeroControle, ZonedDateTime inicio, ZonedDateTime fim) {
 		this.numeroControle = numeroControle;
 		this.inicio = inicio;
 		this.fim = fim;
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}

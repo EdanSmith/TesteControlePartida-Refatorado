@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.controlepartidascs.model.Partida;
 import br.com.controlepartidascs.service.JogadorService;
+import br.com.controlepartidascs.service.PartidaDetalheService;
 import br.com.controlepartidascs.service.PartidaService;
 import br.com.controlepartidascs.service.WeaponService;
 
@@ -40,7 +41,6 @@ public class PartidaController {
 		String ranking = partidaService.getRankingByDate(date);
 		
 		LogController.log("Ranking de Jogadores Visualizado");
-		
 		return ranking;
 	}
 	
@@ -68,7 +68,7 @@ public class PartidaController {
 	@RequestMapping(value = "/listarPartidaDetalhada", method = RequestMethod.GET, produces = "application/json")
 	public String listarPartidaDetalhada(@RequestParam(required = false, name = "matchId") String id) {
 		
-		String partidaComDetalhes = partidaService.findPartidaByNumeroControle(Integer.parseInt(id));
+		String partidaComDetalhes = partidaService.getRankingPartidaByNumeroControle(Integer.parseInt(id));
 		
 		LogController.log("Lista de uma partida detalhada foi visualizada");
 		

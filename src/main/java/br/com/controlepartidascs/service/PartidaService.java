@@ -26,7 +26,6 @@ import br.com.controlepartidascs.model.PartidaDetalhe;
 import br.com.controlepartidascs.model.Ranking;
 import br.com.controlepartidascs.model.RankingJogadorMinimo;
 import br.com.controlepartidascs.model.RankingPorPartida;
-import br.com.controlepartidascs.repository.JogadorRepository;
 import br.com.controlepartidascs.repository.PartidaRepository;
 
 @Service
@@ -36,7 +35,7 @@ public class PartidaService {
 	PartidaRepository partidaRepository;
 
 	@Autowired
-	JogadorRepository jogadorRepository;
+	JogadorService jogadorService;
 
 	@Autowired
 	PartidaDetalheService partidaDetalheService;
@@ -48,10 +47,27 @@ public class PartidaService {
 		PopulaBancoComJson pbcj = new PopulaBancoComJson();
 		List<Partida> partida = pbcj.getPartidasFromJsonFile();
 		for (Partida match : partida) {
+			Set<Jogador> jogadores = match.getJogador();
+			jogadorService.salvarJogadoresInexistentes(jogadores); // Caso o banco não esteja populado ainda, o método
+																	// irá
+																	// adicionar jogadores inexistentes
+
 			salvarPartidaComSomenteNomeDeJogadores(match);
 		}
 	}
+	
+	public Iterable<Partida> findAll(){
+		return partidaRepository.findAll();
+	}
+	
+	public List<Partida> findByInicioBetween(ZonedDateTime zdtInicio, ZonedDateTime zdtFim){
+		return partidaRepository.findByInicioBetween(zdtInicio, zdtFim);
+	}
 
+	public Partida findByNumeroControle(int numeroControle) {
+		return partidaRepository.findByNumeroControle(numeroControle);
+	}
+	
 	public void salvar(Partida partida) {
 		partidaRepository.save(partida);
 	}
@@ -64,7 +80,7 @@ public class PartidaService {
 		Iterator itr = jogador.iterator();
 		while (itr.hasNext()) {
 			jogadorTemp = (Jogador) itr.next();
-			jogadorNovo.add(jogadorRepository.findByNome(jogadorTemp.getNome()));
+			jogadorNovo.add(jogadorService.findByNome(jogadorTemp.getNome()));
 		}
 
 		partida.setJogador(jogadorNovo);
@@ -93,7 +109,7 @@ public class PartidaService {
 		Iterable<Jogador> jogadores;
 		List<Jogador> jogador = new ArrayList<Jogador>();
 
-		jogadores = jogadorRepository.findAll();
+		jogadores = jogadorService.findAll();
 
 		jogadores.forEach(jogador::add);
 		Collections.sort(jogador, Comparator.comparingInt(Jogador::getId));
@@ -179,7 +195,7 @@ public class PartidaService {
 		return json.toString();
 	}
 
-	public String findPartidaByNumeroControle(int numeroControle) {
+	public String getRankingPartidaByNumeroControle(int numeroControle) {
 		Partida partida = partidaRepository.findByNumeroControle(numeroControle);
 
 		List<Jogador> jogadores = new ArrayList<Jogador>();

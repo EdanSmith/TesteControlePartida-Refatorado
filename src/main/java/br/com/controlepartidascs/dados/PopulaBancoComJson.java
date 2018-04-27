@@ -24,54 +24,36 @@ import br.com.controlepartidascs.model.Weapon;
 
 public class PopulaBancoComJson {
 
-	private JsonElement getJsonFile(String path) {
+	private List<JsonElement> getJsonFile(String path) {
 
 		String fileName = path;
 		List<String> lines = new ArrayList<String>();
-
+		List<JsonElement> jsonElement = new ArrayList<>();
+		JsonParser jp = new JsonParser();
+		
 		URI uri;
 		try {
 			uri = this.getClass().getResource(fileName).toURI();
 
 			lines = Files.readAllLines(Paths.get(uri), Charset.defaultCharset());
+			
+            for (String line : lines) {
+            	
+                jsonElement.add( jp.parse(line));
+            }
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		JsonParser jp = new JsonParser();
-		JsonElement je = jp.parse(lines.toString());
-
-		// LogController.logDebug(lines.toString());
-
-		return je;
+		return jsonElement;
 	}
 
-	private List<Partida> transformarJsonEmListaDePartidas(JsonElement jsonElement) {
-		// LogController.logDebug("Chegada do Json Element no método: " +
-		// jsonElement.toString());
-
-		JsonArray jsonArray = jsonElement.getAsJsonArray();
-
-		// LogController.logDebug("Json Element se tornando Array " +
-		// jsonArray.toString());
-
-		JsonObject jsonObjectPartidas = jsonArray.get(0).getAsJsonObject();
-
-		// LogController.logDebug("Pegando o index 0 do array " +
-		// jsonObjectPartidas.toString());
-
-		JsonArray jsonArrayMatch = jsonObjectPartidas.get("Partidas").getAsJsonArray();
-
-		// LogController.logDebug("Pegando o jsonArrayMatch, mas sem pegar o Partidas em
-		// específico " + jsonObjectPartidas.toString());
-
-		// LogController.logDebug("Pegando o jsonArrayMatch, pegando o Partidas " +
-		// jsonObjectPartidas.get("Partidas").getAsJsonArray());
+	private List<Partida> transformarJsonEmListaDePartidas(List<JsonElement> jsonElement) {
 
 		List<Partida> partidas = new ArrayList<>();
 
-		for (JsonElement je : jsonArrayMatch) {
+		for (JsonElement je : jsonElement) {
 			Partida partida = new Partida();
 			try {
 				JsonObject jo = je.getAsJsonObject();
@@ -113,15 +95,11 @@ public class PopulaBancoComJson {
 		return partidas;
 	}
 
-	private List<PartidaDetalhe> transformarJsonEmListaDePartidaDetalhe(JsonElement jsonElement) {
-
-		JsonArray jsonArray = jsonElement.getAsJsonArray();
-		JsonObject jsonObjectPartidas = jsonArray.get(0).getAsJsonObject();
-		JsonArray jsonArrayMatch = jsonObjectPartidas.get("PartidaDetalhe").getAsJsonArray();
+	private List<PartidaDetalhe> transformarJsonEmListaDePartidaDetalhe(List<JsonElement> jsonElement) {
 
 		List<PartidaDetalhe> partidasDetalhe = new ArrayList<>();
 
-		for (JsonElement je : jsonArrayMatch) {
+		for (JsonElement je : jsonElement) {
 			PartidaDetalhe partidaDetalhe = new PartidaDetalhe();
 
 			try {
@@ -170,13 +148,13 @@ public class PopulaBancoComJson {
 
 	public List<Partida> getPartidasFromJsonFile() {
 		PopulaBancoComJson populaBancoJson = new PopulaBancoComJson();
-		JsonElement je = populaBancoJson.getJsonFile("/json/matches.json");
+		List<JsonElement> je = populaBancoJson.getJsonFile("/json/matches.json");
 		return populaBancoJson.transformarJsonEmListaDePartidas(je);
 	}
 
 	public List<PartidaDetalhe> getPartidasDetalheFromJsonFile() {
 		PopulaBancoComJson populaBancoJson = new PopulaBancoComJson();
-		JsonElement je = populaBancoJson.getJsonFile("/json/wrangle.json");
+		List<JsonElement> je = populaBancoJson.getJsonFile("/json/wrangle.json");
 		return populaBancoJson.transformarJsonEmListaDePartidaDetalhe(je);
 	}
 

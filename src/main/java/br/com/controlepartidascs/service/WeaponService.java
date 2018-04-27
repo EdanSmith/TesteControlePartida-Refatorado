@@ -18,7 +18,6 @@ import br.com.controlepartidascs.model.Partida;
 import br.com.controlepartidascs.model.PartidaDetalhe;
 import br.com.controlepartidascs.model.RankingWeapon;
 import br.com.controlepartidascs.model.Weapon;
-import br.com.controlepartidascs.repository.PartidaRepository;
 import br.com.controlepartidascs.repository.WeaponRepository;
 
 @Service
@@ -28,11 +27,19 @@ public class WeaponService {
 	WeaponRepository weaponRepository;
 
 	@Autowired
-	PartidaRepository partidaRepository;
+	PartidaService partidaService;
 
 	@Autowired
 	PartidaDetalheService partidaDetalheService;
 
+	public boolean verificarExistenciaPorNome(String nome) {
+		Weapon weapon = weaponRepository.findByNome(nome);
+		if(weapon == null) {
+			return false;
+		}
+		return true;
+	}
+	
 	public Weapon getWeaponByName(String nome) {
 		return weaponRepository.findByNome(nome);
 	}
@@ -57,10 +64,10 @@ public class WeaponService {
 		List<Partida> partidas = new ArrayList<Partida>();
 
 		if (zdtInicio == null || zdtFim == null) {
-			Iterable<Partida> partidasTemp = partidaRepository.findAll();
+			Iterable<Partida> partidasTemp = partidaService.findAll();
 			partidasTemp.forEach(partidas::add);
 		} else {
-			partidas = partidaRepository.findByInicioBetween(zdtInicio, zdtFim);
+			partidas = partidaService.findByInicioBetween(zdtInicio, zdtFim);
 		}
 
 		Iterable<Weapon> weapons;
