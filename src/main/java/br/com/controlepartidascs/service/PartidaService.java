@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 
 import br.com.controlepartidascs.controller.LogController;
+import br.com.controlepartidascs.dados.PopulaBancoComJson;
 import br.com.controlepartidascs.model.Jogador;
 import br.com.controlepartidascs.model.ListaPartidaGanhador;
 import br.com.controlepartidascs.model.Partida;
@@ -39,6 +40,17 @@ public class PartidaService {
 
 	@Autowired
 	PartidaDetalheService partidaDetalheService;
+
+	/**
+	 * Popula o banco de dados com o Json de partidas. "matches.json"
+	 */
+	public void popularBanco() {
+		PopulaBancoComJson pbcj = new PopulaBancoComJson();
+		List<Partida> partida = pbcj.getPartidasFromJsonFile();
+		for (Partida match : partida) {
+			salvarPartidaComSomenteNomeDeJogadores(match);
+		}
+	}
 
 	public void salvar(Partida partida) {
 		partidaRepository.save(partida);
@@ -199,9 +211,13 @@ public class PartidaService {
 			}
 		});
 
+		Collections.reverse(rankingJogadorMinimo);
+
 		for (int i = 0; i < rankingJogadorMinimo.size(); i++) {
 			rankingJogadorMinimo.get(i).setPosicao(i + 1);
 			rankingJogadorMinimo.get(i).setJogadorNome(rankingJogadorMinimo.get(i).getJogador().getNome());
+			rankingJogadorMinimo.get(i)
+					.setPontuacao(rankingJogadorMinimo.get(i).getJogador().getJogadorPontuacao().getPontuacao());
 		}
 
 		rankingPorPartida.setRankingJogadorMinimo(rankingJogadorMinimo);

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.controlepartidascs.model.Partida;
 import br.com.controlepartidascs.service.JogadorService;
+import br.com.controlepartidascs.service.PartidaDetalheService;
 import br.com.controlepartidascs.service.PartidaService;
 import br.com.controlepartidascs.service.WeaponService;
 
@@ -16,6 +17,9 @@ import br.com.controlepartidascs.service.WeaponService;
 @RequestMapping(value = "/partida")
 public class PartidaController {
 
+	@Autowired
+	PartidaDetalheService partidaDetalheService;
+	
 	@Autowired
 	PartidaService partidaService;
 
@@ -41,6 +45,7 @@ public class PartidaController {
 		
 		LogController.log("Ranking de Jogadores Visualizado");
 		
+		partidaDetalheService.popularBanco();
 		return ranking;
 	}
 	

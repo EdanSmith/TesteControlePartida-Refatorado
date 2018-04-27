@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.controlepartidascs.controller.LogController;
+import br.com.controlepartidascs.dados.PopulaBancoComJson;
 import br.com.controlepartidascs.model.Jogador;
 import br.com.controlepartidascs.model.Partida;
 import br.com.controlepartidascs.model.PartidaDetalhe;
@@ -30,6 +31,17 @@ public class PartidaDetalheService {
 	WeaponService weaponService;
 
 	LogController log = new LogController();
+	
+	/**
+	 * Popula o banco de dados com o Json de partidas detalhadas. "wrangle.json"
+	 */
+	public void popularBanco() {
+		PopulaBancoComJson pbcj = new PopulaBancoComJson();
+		List<PartidaDetalhe> partidaDetalhe = pbcj.getPartidasDetalheFromJsonFile();
+		for(PartidaDetalhe matchDetail : partidaDetalhe) {
+			salvarFromServidorJogo(matchDetail);
+		}
+	}
 
 	public void salvar(PartidaDetalhe partidaDetalhe) {
 		partidaDetalheRepository.save(partidaDetalhe);
