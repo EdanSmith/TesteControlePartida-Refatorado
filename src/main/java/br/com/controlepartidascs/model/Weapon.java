@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Weapon {
@@ -17,6 +18,7 @@ public class Weapon {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
+	@NotNull
 	private String nome;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "weapon")

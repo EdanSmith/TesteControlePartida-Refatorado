@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,13 +30,16 @@ public class Partida {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotNull
 	@JsonProperty("match")
 	@Column(name = "numero_controle")
 	private Integer numeroControle;
 
+	@NotNull
 	@JsonProperty("begin")
 	private ZonedDateTime inicio;
 
+	@NotNull
 	@JsonProperty("end")
 	private ZonedDateTime fim;
 

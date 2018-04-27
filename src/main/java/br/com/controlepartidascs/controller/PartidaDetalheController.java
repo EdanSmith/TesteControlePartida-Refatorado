@@ -1,7 +1,5 @@
 package br.com.controlepartidascs.controller;
 
-import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +20,15 @@ public class PartidaDetalheController {
 	PartidaDetalheService partidaDetalheService;
 
 	/**
+	 * Registrar Kill - EX 3
 	 * @param partidaDetalhe
 	 * @return
 	 */
 	@RequestMapping(value = "/gravar", method = RequestMethod.POST, consumes = "application/json")
-	public Response gravarPartida(@RequestBody List<PartidaDetalhe> partidaDetalhe) {
+	public Response gravarPartida(@RequestBody PartidaDetalhe partidaDetalhe) {
 		try {
-			for (PartidaDetalhe pd : partidaDetalhe) {
-				partidaDetalheService.salvarFromServidorJogo(pd);
-			}
-		} catch (Exception e) { // Melhorar tratamento para não salvar só metade.
+			partidaDetalheService.salvarFromServidorJogo(partidaDetalhe);
+		} catch (Exception e) {
 			LogController.logWarning("Tentativa falha em gravação de partida detalhe");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
@@ -41,6 +38,11 @@ public class PartidaDetalheController {
 		return Response.ok("Partida Detalhes foram Salvas").build();
 	}
 
+	/**
+	 * Detalhe de Partida - EX 6
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "/listar", method = RequestMethod.GET, produces = "application/json")
 	public Response listarPartidaDetalhada(@RequestParam(required = false, name = "matchId") String id) {
 		String partidaComDetalhes;

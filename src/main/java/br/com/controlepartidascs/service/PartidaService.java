@@ -79,11 +79,16 @@ public class PartidaService {
 	}
 
 	public void salvarPartidaComSomenteNomeDeJogadores(Partida partida) throws Exception {
+		if(findByNumeroControle(partida.getNumeroControle()) != null) {
+			LogController.logWarning("Essa partida já foi salva uma vez");
+			return;
+		}
+		
 		Set<Jogador> jogador = partida.getJogador();
 		Set<Jogador> jogadorNovo = new HashSet<Jogador>();
 		Jogador jogadorTemp;
 
-		Iterator itr = jogador.iterator();
+		Iterator<Jogador> itr = jogador.iterator();
 		while (itr.hasNext()) {
 			jogadorTemp = (Jogador) itr.next();
 			jogadorNovo.add(jogadorService.findByNome(jogadorTemp.getNome()));

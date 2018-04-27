@@ -7,9 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import br.com.controlepartidascs.controller.LogController;
-import br.com.controlepartidascs.dados.PopulaBancoComJson;
-
 @SpringBootApplication(scanBasePackages= {"br.com.controlepartidascs.controller", "br.com.controlepartidascs.service"})
 public class Configuracao {
 

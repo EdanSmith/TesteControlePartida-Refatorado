@@ -1,11 +1,8 @@
 package br.com.controlepartidascs.controller;
 
-import java.net.URI;
-
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -49,6 +46,11 @@ public class PartidaController {
 		return Response.ok("Partida número " + partida.getNumeroControle() + " Gravada com sucesso").build();
 	}
 
+	/**
+	 * Ranking Jogadores - EX 2
+	 * @param date
+	 * @return
+	 */
 	@RequestMapping(value = "/rankingJogadores", method = RequestMethod.GET, produces = "application/json")
 	public Response rankingJogadores(@RequestParam(required = false, name = "data") String date) {
 
@@ -64,6 +66,12 @@ public class PartidaController {
 		return Response.ok(ranking).build();
 	}
 
+	/**
+	 * Ranking Armas - EX 4
+	 * @param dateIni
+	 * @param dateFim
+	 * @return
+	 */
 	@RequestMapping(value = "/rankingArmas", method = RequestMethod.GET, produces = "application/json")
 	public Response rankingWeapons(@RequestParam(required = false, name = "dataIni") String dateIni,
 			@RequestParam(required = false, name = "dataFim") String dateFim) {
@@ -81,6 +89,10 @@ public class PartidaController {
 		return Response.ok(ranking).build();
 	}
 
+	/**
+	 * Lista de Partidas - EX 5
+	 * @return
+	 */
 	@RequestMapping(value = "/listarPartidas", method = RequestMethod.GET, produces = "application/json")
 	public Response listarPartida() {
 

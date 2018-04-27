@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -22,26 +23,44 @@ public class PartidaDetalhe {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@NotNull
 	@JsonProperty("match")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_partida", nullable = false)
 	private Partida partida;
 
+	@NotNull
 	@JsonProperty("killtime")
 	@Column(name = "killtime")
 	private LocalTime killTime;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "id_jogador_killer", nullable = false)
 	private Jogador jogadorKiller;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "id_jogador_killed", nullable = false)
 	private Jogador jogadorKilled;
-	
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "id_weapon", nullable = false)
 	private Weapon weapon;
+
+	public PartidaDetalhe() {
+	}
+
+	public PartidaDetalhe(Partida partida, LocalTime killTime, Jogador jogadorKiller, Jogador jogadorKilled,
+			Weapon weapon) {
+		super();
+		this.partida = partida;
+		this.killTime = killTime;
+		this.jogadorKiller = jogadorKiller;
+		this.jogadorKilled = jogadorKilled;
+		this.weapon = weapon;
+	}
 
 	public Integer getId() {
 		return id;
@@ -90,7 +109,5 @@ public class PartidaDetalhe {
 	public void setPartida(Partida partida) {
 		this.partida = partida;
 	}
-	
-	
 
 }

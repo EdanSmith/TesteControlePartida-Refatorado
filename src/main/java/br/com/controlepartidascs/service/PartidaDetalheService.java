@@ -106,7 +106,7 @@ public class PartidaDetalheService {
 	}
 
 	public void salvarFromServidorJogo(PartidaDetalhe partidaDetalhe) throws Exception {
-
+		
 		Partida partida;
 		partida = partidaService.findByNumeroControle(partidaDetalhe.getPartida().getNumeroControle());
 		partidaDetalhe.setPartida(partida);
@@ -123,6 +123,14 @@ public class PartidaDetalheService {
 		weapon = weaponService.getWeaponByName(partidaDetalhe.getWeapon().getNome());
 		partidaDetalhe.setWeapon(weapon);
 
+		PartidaDetalhe partidaDetalheTemp = partidaDetalheRepository.findByAllAttributes(partida.getNumeroControle(),
+				partidaDetalhe.getKillTime(), jogadorKiller.getId(), jogadorKilled.getId(), weapon.getId());
+		
+		if(partidaDetalheTemp != null) {
+			LogController.logWarning("Essa Partida Detalhe já foi salva anteriormente");
+			throw new Exception("Essa partida já foi salva anteriormente");
+		}
+		
 		partidaDetalheRepository.save(partidaDetalhe);
 
 	}
