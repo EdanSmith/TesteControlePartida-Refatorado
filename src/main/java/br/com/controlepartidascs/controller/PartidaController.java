@@ -1,5 +1,6 @@
 package br.com.controlepartidascs.controller;
 
+import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class PartidaController {
 	 * @return
 	 */
 	@RequestMapping(value = "/gravar", method = RequestMethod.POST, consumes = "application/json")
-	public Response gravarPartida(@RequestBody Partida partida) {
+	public Response gravarPartida(@Valid @RequestBody Partida partida) {
 
 		try {
 			partidaService.salvarPartidaComSomenteNomeDeJogadores(partida);
@@ -52,7 +53,7 @@ public class PartidaController {
 	 * @return
 	 */
 	@RequestMapping(value = "/rankingJogadores", method = RequestMethod.GET, produces = "application/json")
-	public Response rankingJogadores(@RequestParam(required = false, name = "data") String date) {
+	public Response rankingJogadores(@Valid @RequestParam(required = false, name = "data") String date) {
 
 		String ranking = "";
 
@@ -73,8 +74,8 @@ public class PartidaController {
 	 * @return
 	 */
 	@RequestMapping(value = "/rankingArmas", method = RequestMethod.GET, produces = "application/json")
-	public Response rankingWeapons(@RequestParam(required = false, name = "dataIni") String dateIni,
-			@RequestParam(required = false, name = "dataFim") String dateFim) {
+	public Response rankingWeapons(@Valid @RequestParam(required = false, name = "dataIni") String dateIni,
+			@Valid @RequestParam(required = false, name = "dataFim") String dateFim) {
 
 		String ranking = "";
 

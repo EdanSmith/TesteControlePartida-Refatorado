@@ -1,5 +1,6 @@
 package br.com.controlepartidascs.controller;
 
+import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class PartidaDetalheController {
 	 * @return
 	 */
 	@RequestMapping(value = "/gravar", method = RequestMethod.POST, consumes = "application/json")
-	public Response gravarPartida(@RequestBody PartidaDetalhe partidaDetalhe) {
+	public Response gravarPartida(@Valid @RequestBody PartidaDetalhe partidaDetalhe) {
 		try {
 			partidaDetalheService.salvarFromServidorJogo(partidaDetalhe);
 		} catch (Exception e) {
@@ -44,7 +45,7 @@ public class PartidaDetalheController {
 	 * @return
 	 */
 	@RequestMapping(value = "/listar", method = RequestMethod.GET, produces = "application/json")
-	public Response listarPartidaDetalhada(@RequestParam(required = false, name = "matchId") String id) {
+	public Response listarPartidaDetalhada(@Valid @RequestParam(required = false, name = "matchId") String id) {
 		String partidaComDetalhes;
 
 		try {
